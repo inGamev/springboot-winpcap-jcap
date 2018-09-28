@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
@@ -95,17 +97,21 @@ public class MainController {
             CharBuffer cBuf = charset.decode(buf);
             //最后必须转换成String，否则前端可能不认识
             String data = String.valueOf(cBuf);
+            try {
+                data = new String(data.getBytes("gbk"), "utf-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
             if (ip.data.length != 0) {
-                System.out.println(data);
-                System.out.println("----------------------------------------------");
 //                writer.writePacket(packet);
                 JSONObject json = new JSONObject();
                 json.put("state", data);
                 return json;
             }
-            return null;
         }
-        return null;
+        JSONObject json = new JSONObject();
+        json.put("state", "null");
+        return json;
     }
 
     /**
